@@ -1,0 +1,50 @@
+--------------------------------------------------------------------------------
+/* The first and foremost is that you should always use HTTPS over HTTP /*
+
+OpenSSL: https://slproweb.com/products/Win32OpenSSL.html
+
+For local testing, I will use OpenSSL on Windows to generate the key and 
+certificate for HTTPS configuration. The process is similar on Mac or Linux.
+
+After installing OpenSSL, I will open OpenSSL and start generating key and 
+cert files.
+
+OpenSSL> req -newkey rsa:2048 -nodes -keyout keytemp.pem -x509 -days 365 -out cert.pem
+OpenSSL> rsa -in keytemp.pem -out key.pem
+
+After that, we will move key.pem and cert.pem files to our project. 
+They will be in the config folder.
+
+--------------------------------------------------------------------------------
+/* Secure using key */
+
+node -e "console.log(require('crypto').randomBytes(20).toString('hex'))"
+
+// GET request
+https://127.0.0.1:3000?key=78942ef2c1c98bf10fca09c808d718fa3734703e
+
+
+--------------------------------------------------------------------------------
+/* Secure your MongoDB */
+
+mongo
+
+// Stop MongoDB (Windows)
+net stop MongoDB
+
+// Start mongodb with authentication
+mongod --auth --port 27017 --dbpath C:\your-data\path
+
+
+mongo --port 27017 -u joohncruz -p 123123  --authenticationDatabase CRMdb
+
+mongo
+  > use CRMdb
+  > db.createUser(
+    {
+      user: 'joohncruz',
+      pwd: '123123',
+      roles: [ { role: 'readWrite', db: 'CRMdb' } ]
+    }
+  )
+
